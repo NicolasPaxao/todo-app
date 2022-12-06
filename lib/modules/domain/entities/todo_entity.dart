@@ -2,14 +2,12 @@
 class TodoEntity {
   String? id;
   String? title;
-  String? description;
   DateTime? creationDate;
   bool? status;
 
   TodoEntity({
     this.id,
     this.title,
-    this.description,
     this.creationDate,
     this.status,
   });

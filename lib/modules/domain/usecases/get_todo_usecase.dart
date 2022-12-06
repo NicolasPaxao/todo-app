@@ -9,7 +9,7 @@ abstract class IGetTodosUsecase {
 class GetTodoUsecase implements IGetTodosUsecase {
   final ITodoRepository repository;
 
-  GetTodoUsecase(this.repository);
+  GetTodoUsecase({required this.repository});
   @override
   Future<Either<Exception, List<TodoEntity>>> getTodos() async {
     try {
