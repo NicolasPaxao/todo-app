@@ -2,9 +2,9 @@
 
 A new Flutter project.
 
-## Getting Started
+## Projeto para composição do repositório.
 
-This project is a starting point for a Flutter application.
+Uma aplicação Mobile utilizando os conceitos de Clean Architecture e consumo dos recursos de banco de dados do Firebase.
 
 A few resources to get you started if this is your first Flutter project:
 
