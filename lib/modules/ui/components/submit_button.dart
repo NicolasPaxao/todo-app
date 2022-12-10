@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:todo_app/app_dependency.dart';
 
 class SubmitButton extends StatelessWidget {
   const SubmitButton({
@@ -9,7 +9,11 @@ class SubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () async {
+        if (todoStates.formKey.currentState!.validate()) {
+          await todoStates.postTodo(context);
+        }
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.purple,
         shape: RoundedRectangleBorder(

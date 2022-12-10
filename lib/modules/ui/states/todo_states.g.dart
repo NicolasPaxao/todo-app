@@ -23,6 +23,13 @@ mixin _$TodoStates on _TodoStatesBase, Store {
       (_$todoListComputed ??= Computed<List<TodoEntity>?>(() => super.todoList,
               name: '_TodoStatesBase.todoList'))
           .value;
+  Computed<String?>? _$todoTitleComputed;
+
+  @override
+  String? get todoTitle =>
+      (_$todoTitleComputed ??= Computed<String?>(() => super.todoTitle,
+              name: '_TodoStatesBase.todoTitle'))
+          .value;
 
   late final _$_indexPageAtom =
       Atom(name: '_TodoStatesBase._indexPage', context: context);
@@ -72,12 +79,68 @@ mixin _$TodoStates on _TodoStatesBase, Store {
     });
   }
 
-  late final _$getCategoriasAsyncAction =
-      AsyncAction('_TodoStatesBase.getCategorias', context: context);
+  late final _$formKeyAtom =
+      Atom(name: '_TodoStatesBase.formKey', context: context);
 
   @override
-  Future<void> getCategorias(BuildContext context) {
-    return _$getCategoriasAsyncAction.run(() => super.getCategorias(context));
+  GlobalKey<FormState> get formKey {
+    _$formKeyAtom.reportRead();
+    return super.formKey;
+  }
+
+  @override
+  set formKey(GlobalKey<FormState> value) {
+    _$formKeyAtom.reportWrite(value, super.formKey, () {
+      super.formKey = value;
+    });
+  }
+
+  late final _$_todoTitleAtom =
+      Atom(name: '_TodoStatesBase._todoTitle', context: context);
+
+  @override
+  String? get _todoTitle {
+    _$_todoTitleAtom.reportRead();
+    return super._todoTitle;
+  }
+
+  @override
+  set _todoTitle(String? value) {
+    _$_todoTitleAtom.reportWrite(value, super._todoTitle, () {
+      super._todoTitle = value;
+    });
+  }
+
+  late final _$todoControllerAtom =
+      Atom(name: '_TodoStatesBase.todoController', context: context);
+
+  @override
+  TextEditingController get todoController {
+    _$todoControllerAtom.reportRead();
+    return super.todoController;
+  }
+
+  @override
+  set todoController(TextEditingController value) {
+    _$todoControllerAtom.reportWrite(value, super.todoController, () {
+      super.todoController = value;
+    });
+  }
+
+  late final _$getTodosAsyncAction =
+      AsyncAction('_TodoStatesBase.getTodos', context: context);
+
+  @override
+  Future<void> getTodos(BuildContext context) {
+    return _$getTodosAsyncAction.run(() => super.getTodos(context));
+  }
+
+  late final _$postTodoAsyncAction =
+      AsyncAction('_TodoStatesBase.postTodo', context: context);
+
+  @override
+  Future<void> postTodo(BuildContext context) {
+    return _$postTodoAsyncAction.run(() => super.postTodo(context));
   }
 
   late final _$_TodoStatesBaseActionController =
@@ -106,6 +169,17 @@ mixin _$TodoStates on _TodoStatesBase, Store {
   }
 
   @override
+  void setTodoTitle(String? value) {
+    final _$actionInfo = _$_TodoStatesBaseActionController.startAction(
+        name: '_TodoStatesBase.setTodoTitle');
+    try {
+      return super.setTodoTitle(value);
+    } finally {
+      _$_TodoStatesBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void jumpListTodoByIndex(int? value) {
     final _$actionInfo = _$_TodoStatesBaseActionController.startAction(
         name: '_TodoStatesBase.jumpListTodoByIndex');
@@ -120,8 +194,11 @@ mixin _$TodoStates on _TodoStatesBase, Store {
   String toString() {
     return '''
 pageController: ${pageController},
+formKey: ${formKey},
+todoController: ${todoController},
 indexPage: ${indexPage},
-todoList: ${todoList}
+todoList: ${todoList},
+todoTitle: ${todoTitle}
     ''';
   }
 }

@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:todo_app/modules/domain/entities/todo_entity.dart';
+import '../../domain/entities/todo_entity.dart';
 
 class TodoModel extends TodoEntity {
   String? id;
   String? title;
-  DateTime? creationDate;
+  Timestamp? creationDate;
   bool? status;
 
   TodoModel({
@@ -17,16 +17,16 @@ class TodoModel extends TodoEntity {
 
   TodoModel.fromDocument(DocumentSnapshot doc) {
     id = doc['id'] as String;
-    title = doc['id'] as String;
-    creationDate = doc['id'] as DateTime;
-    status = doc['id'] as bool;
+    title = doc['title'] as String;
+    creationDate = doc['creationDate'] as Timestamp;
+    status = doc['status'] as bool;
   }
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
       'title': title,
-      'creationDate': creationDate?.millisecondsSinceEpoch,
+      'creationDate': creationDate,
       'status': status,
     };
   }
@@ -36,7 +36,7 @@ class TodoModel extends TodoEntity {
       id: map['id'] != null ? map['id'] as String : null,
       title: map['title'] != null ? map['title'] as String : null,
       creationDate: map['creationDate'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['creationDate'] as int)
+          ? map['creationDate'] as Timestamp
           : null,
       status: map['status'] != null ? map['status'] as bool : null,
     );

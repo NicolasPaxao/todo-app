@@ -4,6 +4,6 @@ import 'package:todo_app/modules/ui/pages/todo_page.dart';
 final routes = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(path: '/', builder: ((context, state) => const TodoPage())),
+    GoRoute(path: '/', builder: ((context, state) => TodoPage())),
   ],
 );

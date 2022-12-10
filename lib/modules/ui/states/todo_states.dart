@@ -1,15 +1,22 @@
-import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
-import 'package:todo_app/modules/domain/entities/todo_entity.dart';
-import 'package:todo_app/modules/domain/usecases/get_todo_usecase.dart';
 
 import '../../../app_dependency.dart';
+import '../../domain/entities/todo_entity.dart';
+import '../../domain/usecases/get_todo_usecase.dart';
+import '../../domain/usecases/post_todo_usecase.dart';
+
 part 'todo_states.g.dart';
 
 class TodoStates = _TodoStatesBase with _$TodoStates;
 
 abstract class _TodoStatesBase with Store {
+  clear() {
+    todoController.clear();
+    _todoTitle = '';
+  }
+
   @observable
   int? _indexPage = 0;
   @computed
@@ -21,11 +28,36 @@ abstract class _TodoStatesBase with Store {
   PageController pageController = PageController();
 
   @observable
-  List<TodoEntity>? _todoList;
+  List<TodoEntity>? _todoList = [];
   @computed
-  List<TodoEntity>? get todoList => _todoList;
+  List<TodoEntity>? get todoList =>
+      _todoList!..sort(((a, b) => a.creationDate!.compareTo(b.creationDate!)));
+  @computed
+  List<TodoEntity>? get todoListCompleted =>
+      _todoList!.where((e) => e.status == true).toList();
+  @computed
+  List<TodoEntity>? get todoListUncompleted =>
+      _todoList!.where((e) => e.status == false).toList();
+  @computed
+  bool get isTodoListUncompletedNotEmpty => todoListUncompleted!.isNotEmpty;
+    @computed
+  bool get isTodoListCompledNotEmpty => todoListCompleted!.isNotEmpty;
+    @computed
+  bool get isTodoListdNotEmpty => todoList!.isNotEmpty;
   @action
   void setTodoList(List<TodoEntity> value) => _todoList = value;
+
+  @observable
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @observable
+  String? _todoTitle;
+  @observable
+  TextEditingController todoController = TextEditingController();
+  @computed
+  String? get todoTitle => _todoTitle;
+  @action
+  void setTodoTitle(String? value) => _todoTitle = value!.trim();
 
   @action
   void jumpListTodoByIndex(int? value) {
@@ -33,14 +65,33 @@ abstract class _TodoStatesBase with Store {
   }
 
   @action
-  Future<void> getCategorias(BuildContext context) async {
-    final result = await getIt<GetTodoUsecase>().getTodos();
-    if (result.isRight()) {
+  Future<void> getTodos(BuildContext context) async {
+    try {
+      final result = await getIt<GetTodoUsecase>().getTodos();
       List<TodoEntity> list = result.fold((l) => [], (r) => r);
       setTodoList(list);
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Ocorreu um erro.')));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ocorreu um erro: ${e.toString()}')));
     }
+  }
+
+  @action
+  Future<void> postTodo(BuildContext context) async {
+    try {
+      final result = await getIt<PostTodoUsecase>().postTodo(TodoEntity(
+        title: todoTitle,
+        creationDate: Timestamp.now(),
+        status: false,
+      ));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(result)));
+      clear();
+    } catch (e) {
+      clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ocorreu um erro: ${e.toString()}')));
+    }
+    getTodos(context);
   }
 }
