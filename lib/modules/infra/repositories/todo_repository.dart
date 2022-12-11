@@ -20,17 +20,41 @@ class TodoRepository implements ITodoRepository {
   }
 
   @override
-  Future<String> postTodo(TodoEntity todo) async {
+  Future<Either<Exception, bool>> postTodo(TodoEntity todo) async {
     try {
-      final response = await datasource.postTodo(TodoModel(
-        
+      await datasource.postTodo(TodoModel(
         creationDate: todo.creationDate,
         title: todo.title,
         status: todo.status,
       ));
-      return response;
+      return const Right(true);
     } catch (e) {
-      return e.toString();
+      return Left(Exception(e));
+    }
+  }
+
+  @override
+  Future<Either<Exception, bool>> deleteTodo(String uid) async {
+    try {
+      await datasource.deleteTodo(uid);
+      return const Right(true);
+    } catch (e) {
+      return Left(Exception(e));
+    }
+  }
+
+  @override
+  Future<Either<Exception, bool>> changeStatusTodo(TodoEntity todo) async {
+    try {
+      await datasource.changeStatusTodo(TodoModel(
+        id:  todo.id,
+        creationDate: todo.creationDate,
+        title: todo.title,
+        status: todo.status,
+      ));
+      return const Right(true);
+    } catch (e) {
+      return Left(Exception(e));
     }
   }
 }

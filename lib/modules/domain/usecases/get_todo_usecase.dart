@@ -1,9 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:todo_app/modules/domain/entities/todo_entity.dart';
-import 'package:todo_app/modules/domain/repositories/itodo_repository.dart';
+
+import '../entities/todo_entity.dart';
+import '../repositories/itodo_repository.dart';
 
 abstract class IGetTodosUsecase {
-  Future<Either<Exception, List<TodoEntity>>> getTodos();
+  Future<Either<Exception, List<TodoEntity>>> call();
 }
 
 class GetTodoUsecase implements IGetTodosUsecase {
@@ -11,7 +12,7 @@ class GetTodoUsecase implements IGetTodosUsecase {
 
   GetTodoUsecase({required this.repository});
   @override
-  Future<Either<Exception, List<TodoEntity>>> getTodos() async {
+  Future<Either<Exception, List<TodoEntity>>> call() async {
     try {
       final response = await repository.getTodos();
       return Right(response.foldRight([], (r, previous) => r));

@@ -50,7 +50,7 @@ class TextFieldCustom extends StatelessWidget {
             todoStates.setTodoTitle(value);
           },
           validator: ((value) {
-            if (value!.isEmpty) {
+            if (value!.trim().isEmpty) {
               return 'Campo obrigatório';
             }
             return null;

@@ -6,8 +6,6 @@ import 'package:mobx/mobx.dart';
 
 import '../../../app_dependency.dart';
 import '../../domain/entities/todo_entity.dart';
-import '../../domain/usecases/get_todo_usecase.dart';
-import '../../domain/usecases/post_todo_usecase.dart';
 
 part 'todo_states.g.dart';
 
@@ -32,8 +30,7 @@ abstract class _TodoStatesBase with Store {
   @observable
   List<TodoEntity>? _todoList = [];
   @computed
-  List<TodoEntity>? get todoList =>
-      _todoList!..sort(((a, b) => a.creationDate!.compareTo(b.creationDate!)));
+  List<TodoEntity>? get todoList => _todoList!;
   @computed
   List<TodoEntity>? get todoListCompleted =>
       _todoList!.where((e) => e.status == true).toList();
@@ -75,6 +72,20 @@ abstract class _TodoStatesBase with Store {
   @action
   void setLoadingList(bool? value) => _loadingList = value;
 
+  @observable
+  bool? _loadingStatus = false;
+  @computed
+  bool? get loadingStatus => _loadingStatus;
+  @action
+  void setLoadingStatus(bool? value) => _loadingStatus = value;
+
+  @observable
+  bool? _loadingDelete = false;
+  @computed
+  bool? get loadingDelete => _loadingDelete;
+  @action
+  void setLoadingDelete(bool? value) => _loadingDelete = value;
+
   @action
   void jumpListTodoByIndex(int? value) {
     pageController.jumpToPage(value!);
@@ -84,7 +95,7 @@ abstract class _TodoStatesBase with Store {
   Future<void> getTodos(BuildContext context) async {
     setLoadingList(true);
     try {
-      final result = await getIt<GetTodoUsecase>().getTodos();
+      final result = await getTodoUsecase();
       List<TodoEntity> list = result.fold((l) => [], (r) => r);
       setTodoList(list);
     } catch (e) {
@@ -98,7 +109,7 @@ abstract class _TodoStatesBase with Store {
   Future<void> postTodo(BuildContext context) async {
     setLoading(true);
     try {
-      await getIt<PostTodoUsecase>().postTodo(TodoEntity(
+      await postTodoUsecase(TodoEntity(
         title: todoTitle,
         creationDate: Timestamp.now(),
         status: false,
@@ -110,5 +121,35 @@ abstract class _TodoStatesBase with Store {
     clear();
     getTodos(context);
     setLoading(false);
+  }
+
+  @action
+  Future<void> changeStatusTodo(BuildContext context, TodoEntity todo) async {
+    setLoadingStatus(true);
+    try {
+      var isTodoStatus = todo.status;
+      todo.status = !isTodoStatus!;
+      await changeStatusTodoUsecase(todo);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ocorreu um erro: ${e.toString()}')));
+    }
+    clear();
+    setLoadingStatus(false);
+    getTodos(context);
+  }
+
+  @action
+  Future<void> deleteTodo(BuildContext context, String uid) async {
+    setLoadingDelete(true);
+    try {
+      await deleteTodoUsecase(uid);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ocorreu um erro: ${e.toString()}')));
+    }
+    clear();
+    setLoadingDelete(false);
+    getTodos(context);
   }
 }

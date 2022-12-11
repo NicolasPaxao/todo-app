@@ -80,6 +80,20 @@ mixin _$TodoStates on _TodoStatesBase, Store {
       (_$loadingListComputed ??= Computed<bool?>(() => super.loadingList,
               name: '_TodoStatesBase.loadingList'))
           .value;
+  Computed<bool?>? _$loadingStatusComputed;
+
+  @override
+  bool? get loadingStatus =>
+      (_$loadingStatusComputed ??= Computed<bool?>(() => super.loadingStatus,
+              name: '_TodoStatesBase.loadingStatus'))
+          .value;
+  Computed<bool?>? _$loadingDeleteComputed;
+
+  @override
+  bool? get loadingDelete =>
+      (_$loadingDeleteComputed ??= Computed<bool?>(() => super.loadingDelete,
+              name: '_TodoStatesBase.loadingDelete'))
+          .value;
 
   late final _$_indexPageAtom =
       Atom(name: '_TodoStatesBase._indexPage', context: context);
@@ -209,6 +223,38 @@ mixin _$TodoStates on _TodoStatesBase, Store {
     });
   }
 
+  late final _$_loadingStatusAtom =
+      Atom(name: '_TodoStatesBase._loadingStatus', context: context);
+
+  @override
+  bool? get _loadingStatus {
+    _$_loadingStatusAtom.reportRead();
+    return super._loadingStatus;
+  }
+
+  @override
+  set _loadingStatus(bool? value) {
+    _$_loadingStatusAtom.reportWrite(value, super._loadingStatus, () {
+      super._loadingStatus = value;
+    });
+  }
+
+  late final _$_loadingDeleteAtom =
+      Atom(name: '_TodoStatesBase._loadingDelete', context: context);
+
+  @override
+  bool? get _loadingDelete {
+    _$_loadingDeleteAtom.reportRead();
+    return super._loadingDelete;
+  }
+
+  @override
+  set _loadingDelete(bool? value) {
+    _$_loadingDeleteAtom.reportWrite(value, super._loadingDelete, () {
+      super._loadingDelete = value;
+    });
+  }
+
   late final _$getTodosAsyncAction =
       AsyncAction('_TodoStatesBase.getTodos', context: context);
 
@@ -223,6 +269,23 @@ mixin _$TodoStates on _TodoStatesBase, Store {
   @override
   Future<void> postTodo(BuildContext context) {
     return _$postTodoAsyncAction.run(() => super.postTodo(context));
+  }
+
+  late final _$changeStatusTodoAsyncAction =
+      AsyncAction('_TodoStatesBase.changeStatusTodo', context: context);
+
+  @override
+  Future<void> changeStatusTodo(BuildContext context, TodoEntity todo) {
+    return _$changeStatusTodoAsyncAction
+        .run(() => super.changeStatusTodo(context, todo));
+  }
+
+  late final _$deleteTodoAsyncAction =
+      AsyncAction('_TodoStatesBase.deleteTodo', context: context);
+
+  @override
+  Future<void> deleteTodo(BuildContext context, String uid) {
+    return _$deleteTodoAsyncAction.run(() => super.deleteTodo(context, uid));
   }
 
   late final _$_TodoStatesBaseActionController =
@@ -284,6 +347,28 @@ mixin _$TodoStates on _TodoStatesBase, Store {
   }
 
   @override
+  void setLoadingStatus(bool? value) {
+    final _$actionInfo = _$_TodoStatesBaseActionController.startAction(
+        name: '_TodoStatesBase.setLoadingStatus');
+    try {
+      return super.setLoadingStatus(value);
+    } finally {
+      _$_TodoStatesBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setLoadingDelete(bool? value) {
+    final _$actionInfo = _$_TodoStatesBaseActionController.startAction(
+        name: '_TodoStatesBase.setLoadingDelete');
+    try {
+      return super.setLoadingDelete(value);
+    } finally {
+      _$_TodoStatesBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void jumpListTodoByIndex(int? value) {
     final _$actionInfo = _$_TodoStatesBaseActionController.startAction(
         name: '_TodoStatesBase.jumpListTodoByIndex');
@@ -309,7 +394,9 @@ isTodoListCompledNotEmpty: ${isTodoListCompledNotEmpty},
 isTodoListdNotEmpty: ${isTodoListdNotEmpty},
 todoTitle: ${todoTitle},
 loading: ${loading},
-loadingList: ${loadingList}
+loadingList: ${loadingList},
+loadingStatus: ${loadingStatus},
+loadingDelete: ${loadingDelete}
     ''';
   }
 }

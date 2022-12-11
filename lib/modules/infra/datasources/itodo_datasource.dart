@@ -1,7 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:todo_app/modules/infra/models/todo_model.dart';
+
+import '../models/todo_model.dart';
 
 abstract class ITodoDatasource {
   Future<Either<Exception, List<TodoModel>>> getTodos();
-  Future<String> postTodo(TodoModel todo);
+  Future<Either<Exception, bool>> postTodo(TodoModel todo);
+  Future<Either<Exception, bool>> changeStatusTodo(TodoModel todo);
+  Future<Either<Exception, bool>> deleteTodo(String uid);
 }
