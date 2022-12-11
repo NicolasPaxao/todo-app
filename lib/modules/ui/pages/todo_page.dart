@@ -143,6 +143,7 @@ class _TodoPageState extends State<TodoPage> {
                 ],
               ),
             ),
+            
             const SizedBox(height: 16),
             Observer(
               builder: ((context) {
@@ -191,7 +192,9 @@ class _TodoPageState extends State<TodoPage> {
                   );
                 }
               }),
+              
             )
+            
           ],
         ),
       ),
