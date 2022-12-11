@@ -94,11 +94,13 @@ class TodoTile extends StatelessWidget {
                 children: [
                   IconButton(
                     splashRadius: 26,
-                    onPressed: () => DialogsApp.confirmDialog(
-                        context: context,
-                        titleModal: 'Deseja excluir este item?',
-                        buttonMainAcion: 'Excluir',
-                        mainFunction: () {}),
+                    onPressed: () {
+                      DialogsApp.confirmDialog(
+                          context: context,
+                          titleModal: 'Deseja excluir este item?',
+                          buttonMainAcion: 'Excluir',
+                          mainFunction: () {});
+                    },
                     icon: const Icon(
                       Icons.delete_rounded,
                       color: Colors.purple,

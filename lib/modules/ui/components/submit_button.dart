@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/app_dependency.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+
+import '../../../app_dependency.dart';
 
 class SubmitButton extends StatelessWidget {
   const SubmitButton({
@@ -8,24 +10,37 @@ class SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        if (todoStates.formKey.currentState!.validate()) {
-          await todoStates.postTodo(context);
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.purple,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+    return Observer(builder: ((context) {
+      return ElevatedButton(
+        onPressed: () async {
+          FocusScope.of(context).unfocus();
+          if (todoStates.formKey.currentState!.validate()) {
+            await todoStates.postTodo(context);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: todoStates.loading!
+              ? Colors.purple.withOpacity(0.5)
+              : Colors.purple,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: EdgeInsets.zero,
         ),
-        padding: EdgeInsets.zero,
-      ),
-      child: const Icon(
-        Icons.keyboard_arrow_right_outlined,
-        size: 32,
-        color: Colors.white,
-      ),
-    );
+        child: todoStates.loading!
+            ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              )
+            : const Icon(
+                Icons.keyboard_arrow_right_outlined,
+                size: 32,
+                color: Colors.white,
+              ),
+      );
+    }));
   }
 }

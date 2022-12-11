@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:todo_app/app_dependency.dart';
+import 'package:todo_app/modules/ui/components/completed_todos_list.dart';
 import 'package:todo_app/modules/ui/components/textfield_custom.dart';
 
 import '../components/list_title_switcher.dart';
 import '../components/submit_button.dart';
-import '../components/todo_tile.dart';
 
 class TodoPage extends StatefulWidget {
   const TodoPage({super.key});
@@ -24,58 +24,66 @@ class _TodoPageState extends State<TodoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final heightMq = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 28),
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const FittedBox(
-                      child: Text(
-                        'Dezembro',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.purple,
+            SizedBox(
+              height: heightMq * 0.12,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const FittedBox(
+                          child: Text(
+                            'Dezembro',
+                            style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.purple),
+                            maxLines: 1,
+                          ),
                         ),
-                        maxLines: 1,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    FittedBox(
-                      child: Text(
-                        'dia ${DateTime.now().day}',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
+                        FittedBox(
+                          child: Text(
+                            'dia ${DateTime.now().day}',
+                            style: const TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.w500),
+                            maxLines: 1,
+                          ),
                         ),
-                        maxLines: 1,
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-                const FittedBox(
-                  child: Text(
-                    'Lista de\nTo-Dos',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.purple,
-                    ),
-                    textAlign: TextAlign.end,
-                    maxLines: 2,
                   ),
-                )
-              ],
+                  const SizedBox(width: 20),
+                  const Expanded(
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: FittedBox(
+                        child: Text(
+                          'Lista de\nTo-Dos',
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.purple,
+                          ),
+                          textAlign: TextAlign.end,
+                          maxLines: 2,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
             const Divider(thickness: 1, height: 40),
             Row(
@@ -106,53 +114,30 @@ class _TodoPageState extends State<TodoPage> {
                   bottom: BorderSide(color: Colors.purple, width: 3),
                 ),
               ),
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: heightMq * 0.5,
               child: PageView(
                 controller: todoStates.pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
+                  Observer(builder: ((context) {
+                    return TodoListTileCustom(
+                      listIsEmpty: todoStates.isTodoListdNotEmpty,
+                      todosList: todoStates.todoList!,
+                      emptyMessage: 'Nenhum item a ser listado',
+                    );
+                  })),
                   Observer(builder: (_) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.zero,
-                      itemCount: todoStates.todoList!.length,
-                      itemBuilder: ((context, index) {
-                        return TodoTile(
-                          todo: todoStates.todoList![index],
-                        );
-                      }),
+                    return TodoListTileCustom(
+                      listIsEmpty: todoStates.isTodoListCompledNotEmpty,
+                      todosList: todoStates.todoListCompleted!,
+                      emptyMessage: 'Sem itens completos',
                     );
                   }),
                   Observer(builder: (_) {
-                    return todoStates.isTodoListCompledNotEmpty
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            physics: const BouncingScrollPhysics(),
-                            padding: EdgeInsets.zero,
-                            itemCount: todoStates.todoListCompleted!.length,
-                            itemBuilder: ((context, index) {
-                              return TodoTile(
-                                todo: todoStates.todoListCompleted![index],
-                              );
-                            }),
-                          )
-                        : const Center(
-                            child: Text('Sem itens completos'),
-                          );
-                  }),
-                  Observer(builder: (_) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.zero,
-                      itemCount: todoStates.todoListUncompleted!.length,
-                      itemBuilder: ((context, index) {
-                        todoStates.todoList!;
-                        return TodoTile(
-                          todo: todoStates.todoListUncompleted![index],
-                        );
-                      }),
+                    return TodoListTileCustom(
+                      listIsEmpty: todoStates.isTodoListUncompletedNotEmpty,
+                      todosList: todoStates.todoListUncompleted!,
+                      emptyMessage: 'Sem itens incompletos',
                     );
                   }),
                 ],

@@ -23,12 +23,62 @@ mixin _$TodoStates on _TodoStatesBase, Store {
       (_$todoListComputed ??= Computed<List<TodoEntity>?>(() => super.todoList,
               name: '_TodoStatesBase.todoList'))
           .value;
+  Computed<List<TodoEntity>?>? _$todoListCompletedComputed;
+
+  @override
+  List<TodoEntity>? get todoListCompleted => (_$todoListCompletedComputed ??=
+          Computed<List<TodoEntity>?>(() => super.todoListCompleted,
+              name: '_TodoStatesBase.todoListCompleted'))
+      .value;
+  Computed<List<TodoEntity>?>? _$todoListUncompletedComputed;
+
+  @override
+  List<TodoEntity>? get todoListUncompleted =>
+      (_$todoListUncompletedComputed ??= Computed<List<TodoEntity>?>(
+              () => super.todoListUncompleted,
+              name: '_TodoStatesBase.todoListUncompleted'))
+          .value;
+  Computed<bool>? _$isTodoListUncompletedNotEmptyComputed;
+
+  @override
+  bool get isTodoListUncompletedNotEmpty =>
+      (_$isTodoListUncompletedNotEmptyComputed ??= Computed<bool>(
+              () => super.isTodoListUncompletedNotEmpty,
+              name: '_TodoStatesBase.isTodoListUncompletedNotEmpty'))
+          .value;
+  Computed<bool>? _$isTodoListCompledNotEmptyComputed;
+
+  @override
+  bool get isTodoListCompledNotEmpty => (_$isTodoListCompledNotEmptyComputed ??=
+          Computed<bool>(() => super.isTodoListCompledNotEmpty,
+              name: '_TodoStatesBase.isTodoListCompledNotEmpty'))
+      .value;
+  Computed<bool>? _$isTodoListdNotEmptyComputed;
+
+  @override
+  bool get isTodoListdNotEmpty => (_$isTodoListdNotEmptyComputed ??=
+          Computed<bool>(() => super.isTodoListdNotEmpty,
+              name: '_TodoStatesBase.isTodoListdNotEmpty'))
+      .value;
   Computed<String?>? _$todoTitleComputed;
 
   @override
   String? get todoTitle =>
       (_$todoTitleComputed ??= Computed<String?>(() => super.todoTitle,
               name: '_TodoStatesBase.todoTitle'))
+          .value;
+  Computed<bool?>? _$loadingComputed;
+
+  @override
+  bool? get loading => (_$loadingComputed ??=
+          Computed<bool?>(() => super.loading, name: '_TodoStatesBase.loading'))
+      .value;
+  Computed<bool?>? _$loadingListComputed;
+
+  @override
+  bool? get loadingList =>
+      (_$loadingListComputed ??= Computed<bool?>(() => super.loadingList,
+              name: '_TodoStatesBase.loadingList'))
           .value;
 
   late final _$_indexPageAtom =
@@ -127,6 +177,38 @@ mixin _$TodoStates on _TodoStatesBase, Store {
     });
   }
 
+  late final _$_loadingAtom =
+      Atom(name: '_TodoStatesBase._loading', context: context);
+
+  @override
+  bool? get _loading {
+    _$_loadingAtom.reportRead();
+    return super._loading;
+  }
+
+  @override
+  set _loading(bool? value) {
+    _$_loadingAtom.reportWrite(value, super._loading, () {
+      super._loading = value;
+    });
+  }
+
+  late final _$_loadingListAtom =
+      Atom(name: '_TodoStatesBase._loadingList', context: context);
+
+  @override
+  bool? get _loadingList {
+    _$_loadingListAtom.reportRead();
+    return super._loadingList;
+  }
+
+  @override
+  set _loadingList(bool? value) {
+    _$_loadingListAtom.reportWrite(value, super._loadingList, () {
+      super._loadingList = value;
+    });
+  }
+
   late final _$getTodosAsyncAction =
       AsyncAction('_TodoStatesBase.getTodos', context: context);
 
@@ -180,6 +262,28 @@ mixin _$TodoStates on _TodoStatesBase, Store {
   }
 
   @override
+  void setLoading(bool? value) {
+    final _$actionInfo = _$_TodoStatesBaseActionController.startAction(
+        name: '_TodoStatesBase.setLoading');
+    try {
+      return super.setLoading(value);
+    } finally {
+      _$_TodoStatesBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setLoadingList(bool? value) {
+    final _$actionInfo = _$_TodoStatesBaseActionController.startAction(
+        name: '_TodoStatesBase.setLoadingList');
+    try {
+      return super.setLoadingList(value);
+    } finally {
+      _$_TodoStatesBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void jumpListTodoByIndex(int? value) {
     final _$actionInfo = _$_TodoStatesBaseActionController.startAction(
         name: '_TodoStatesBase.jumpListTodoByIndex');
@@ -198,7 +302,14 @@ formKey: ${formKey},
 todoController: ${todoController},
 indexPage: ${indexPage},
 todoList: ${todoList},
-todoTitle: ${todoTitle}
+todoListCompleted: ${todoListCompleted},
+todoListUncompleted: ${todoListUncompleted},
+isTodoListUncompletedNotEmpty: ${isTodoListUncompletedNotEmpty},
+isTodoListCompledNotEmpty: ${isTodoListCompledNotEmpty},
+isTodoListdNotEmpty: ${isTodoListdNotEmpty},
+todoTitle: ${todoTitle},
+loading: ${loading},
+loadingList: ${loadingList}
     ''';
   }
 }

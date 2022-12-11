@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
@@ -40,9 +42,9 @@ abstract class _TodoStatesBase with Store {
       _todoList!.where((e) => e.status == false).toList();
   @computed
   bool get isTodoListUncompletedNotEmpty => todoListUncompleted!.isNotEmpty;
-    @computed
+  @computed
   bool get isTodoListCompledNotEmpty => todoListCompleted!.isNotEmpty;
-    @computed
+  @computed
   bool get isTodoListdNotEmpty => todoList!.isNotEmpty;
   @action
   void setTodoList(List<TodoEntity> value) => _todoList = value;
@@ -59,6 +61,20 @@ abstract class _TodoStatesBase with Store {
   @action
   void setTodoTitle(String? value) => _todoTitle = value!.trim();
 
+  @observable
+  bool? _loading = false;
+  @computed
+  bool? get loading => _loading;
+  @action
+  void setLoading(bool? value) => _loading = value;
+
+  @observable
+  bool? _loadingList = false;
+  @computed
+  bool? get loadingList => _loadingList;
+  @action
+  void setLoadingList(bool? value) => _loadingList = value;
+
   @action
   void jumpListTodoByIndex(int? value) {
     pageController.jumpToPage(value!);
@@ -66,6 +82,7 @@ abstract class _TodoStatesBase with Store {
 
   @action
   Future<void> getTodos(BuildContext context) async {
+    setLoadingList(true);
     try {
       final result = await getIt<GetTodoUsecase>().getTodos();
       List<TodoEntity> list = result.fold((l) => [], (r) => r);
@@ -74,24 +91,24 @@ abstract class _TodoStatesBase with Store {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ocorreu um erro: ${e.toString()}')));
     }
+    setLoadingList(false);
   }
 
   @action
   Future<void> postTodo(BuildContext context) async {
+    setLoading(true);
     try {
-      final result = await getIt<PostTodoUsecase>().postTodo(TodoEntity(
+      await getIt<PostTodoUsecase>().postTodo(TodoEntity(
         title: todoTitle,
         creationDate: Timestamp.now(),
         status: false,
       ));
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(result)));
-      clear();
     } catch (e) {
-      clear();
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ocorreu um erro: ${e.toString()}')));
     }
+    clear();
     getTodos(context);
+    setLoading(false);
   }
 }
